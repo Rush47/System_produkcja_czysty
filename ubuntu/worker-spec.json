@@ -1,0 +1,32 @@
+{
+  "platform": "Ubuntu 24.04 LTS",
+  "agents": [
+    "Aria",
+    "Alex",
+    "Astyria",
+    "Aurelius"
+  ],
+  "worker": {
+    "polymorphic": true,
+    "asynchronous": true,
+    "asymmetric": true,
+    "spherical": true,
+    "dynamic": true,
+    "persistent": true
+  },
+  "observationDimensions": [
+    "code",
+    "logs",
+    "processes",
+    "models",
+    "agents",
+    "security",
+    "resources"
+  ],
+  "principle": "Only real authorized data sources; no simulated visibility",
+  "llm": {
+    "primary": "Ollama 8B uncensored (exact model pending verification)",
+    "fallback": "Gemini Flash Lite (exact API model pending verification)"
+  },
+  "status": "design-not-deployed"
+}
