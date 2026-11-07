@@ -4,7 +4,8 @@
     "Aria",
     "Alex",
     "Astyria",
-    "Aurelius"
+    "Aurelius",
+    "System"
   ],
   "worker": {
     "polymorphic": true,
@@ -25,8 +26,40 @@
   ],
   "principle": "Only real authorized data sources; no simulated visibility",
   "llm": {
-    "primary": "Ollama 8B uncensored (exact model pending verification)",
+    "primary": "Ollama dolphin3:8b",
     "fallback": "Gemini Flash Lite (exact API model pending verification)"
   },
-  "status": "design-not-deployed"
+  "status": "implementation-in-progress-not-deployed",
+  "agent_connections": {
+    "Aria": {
+      "provider": "manual",
+      "status": "not_connected",
+      "worker": "ubuntu-ai-agent@Aria.service",
+      "daemon": "ubuntu-ai-agent@Aria.service"
+    },
+    "Alex": {
+      "provider": "manual",
+      "status": "not_connected",
+      "worker": "ubuntu-ai-agent@Alex.service",
+      "daemon": "ubuntu-ai-agent@Alex.service"
+    },
+    "Astyria": {
+      "provider": "manual",
+      "status": "not_connected",
+      "worker": "ubuntu-ai-agent@Astyria.service",
+      "daemon": "ubuntu-ai-agent@Astyria.service"
+    },
+    "Aurelius": {
+      "provider": "manual",
+      "status": "not_connected",
+      "worker": "ubuntu-ai-agent@Aurelius.service",
+      "daemon": "ubuntu-ai-agent@Aurelius.service"
+    },
+    "System": {
+      "provider": "ollama",
+      "status": "local_model_not_verified",
+      "worker": "ubuntu-ai-agent@System.service",
+      "daemon": "ubuntu-ai-agent@System.service"
+    }
+  }
 }
