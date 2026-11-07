@@ -67,3 +67,24 @@ cd /opt/ubuntu-ai
 ```
 
 Wpisz polecenie naturalnym językiem. Ollama wygeneruje **projekt** kodu, który zapisze się do `~/ubuntu-ai-scripts/system-*.py`. Program otworzy plik w edytorze `$EDITOR` (domyślnie `nano`); możesz zmienić cały kod. Po zamknięciu edytora wybierz `n` (nie wykonuj), `u` (uruchom jako użytkownik) lub `r` (root przez sudo i dodatkowe potwierdzenie). Kod nie uruchamia się automatycznie. Przed uruchomieniem jako root przejrzyj wszystkie polecenia.
+
+## Modyfikacja źródeł kernela Linux przez Ollamę
+
+Wymagane: lokalny Git checkout źródeł Linux, Ollama z modelem `dolphin3:8b`, edytor tekstowy oraz środowisko Python projektu.
+
+```bash
+cd /opt/ubuntu-ai
+/opt/ubuntu-ai/.venv/bin/python ubuntu/kernel-source-editor.py \
+  --kernel-tree /home/System/linux \
+  --file kernel/sched/core.c
+```
+
+Program prosi o opis zmiany naturalnym językiem, generuje propozycję przez Ollamę, otwiera edytor i pokazuje różnice. Zachowuje kopię oryginału `*.ollama-backup`; wpisz `KEEP`, aby zachować zmiany. Nie wykonuje kodu i nie instaluje kernela.
+
+Po sprawdzeniu zmian można osobno zbudować kernel:
+
+```bash
+bash ubuntu/build-kernel.sh /home/System/linux
+```
+
+Skrypt kompiluje w oddzielnym katalogu, wymaga potwierdzenia `BUILD` i nie wykonuje `make install`, `modules_install`, zmian GRUB ani restartu. Kompilacja wymaga odpowiednich pakietów i miejsca na dysku. Nie jest to modyfikacja pamięci działającego jądra ani gwarancja, że wygenerowana zmiana jest bezpieczna. Przed użyciem produkcyjnym konieczne są testy w VM oraz zachowanie oryginalnego kernela jako opcji rozruchowej.
