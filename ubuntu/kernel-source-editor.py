@@ -12,6 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ubuntu.ollama_agent import chat
 
 def git(root, *args):
@@ -21,7 +22,10 @@ def validate(root, relative):
     root = root.resolve(strict=True)
     if not (root / "Makefile").is_file() or not (root / ".git").exists():
         raise ValueError("Kernel Git checkout with Makefile required")
-    target = (root / relative).resolve(strict=True)
+    source_path = root / relative
+    if source_path.is_symlink():
+        raise ValueError("Symlinks are not supported")
+    target = source_path.resolve(strict=True)
     if not target.is_relative_to(root) or target.suffix not in {".c", ".h", ".S"}:
         raise ValueError("Only C, header and assembly files within kernel checkout allowed")
     if target.is_symlink() or target.stat().st_size > 200_000:
@@ -63,8 +67,11 @@ async def main():
     backup.write_text(original, encoding="utf-8")
     target.write_text(answer, encoding="utf-8")
     try:
-        editor = os.environ.get("EDITOR", "nano")
-        subprocess.run([editor, str(target)], check=True)
+        import shlex
+        editor = shlex.split(os.environ.get("EDITOR", "nano"))
+        if not editor:
+            raise ValueError("EDITOR must specify a command")
+        subprocess.run(editor + [str(target)], check=True)
         edited = target.read_text(encoding="utf-8")
         diff = "".join(difflib.unified_diff(original.splitlines(True), edited.splitlines(True),
                                             fromfile="original/" + relative, tofile="edited/" + relative))
