@@ -12,3 +12,5 @@ python3 -m unittest discover -s ubuntu/tests
 ```
 
 Dostępne `/api/health`, `/api/observe`, `/api/tasks`. Obserwacja obejmuje rzeczywiste dane procesów, pamięci i modeli Ollama; pozostałe wymiary uczciwie zwracają `not_connected`. Zadania są zapisywane na dysku. To nie jest jeszcze pełny orkiestrator, czat ani ISO. API nasłuchuje lokalnie; nie wystawiaj bez uwierzytelnienia do Internetu.
+
+Agent **System** jest piątym, niezależnym agentem na liście (nie kontem Linux). Docelowy silnik: lokalna Ollama; obecny rejestr nie potwierdza jeszcze sesji inferencji.\n
