@@ -28,13 +28,15 @@ Druga komenda tworzy **konto Linux System** z prawem sudo i prosi o hasło. Osob
 Aby aktywować odpowiedzi agenta System, zainstaluj Ollamę zgodnie z https://ollama.com/download/linux, następnie:
 
 ```bash
-ollama pull llama3.1:8b
+ollama pull dolphin3:8b
 sudo systemctl restart ubuntu-ai-api.service
 curl http://127.0.0.1:8000/api/health
 curl -sS -X POST http://127.0.0.1:8000/api/agents/system/chat -H 'Content-Type: application/json' -d '{"message":"Cześć, System!"}'
 sudo systemctl status ubuntu-ai-api.service
 ```
 
-Domyślny model `llama3.1:8b` nie jest wariantem uncensored. Jeśli chcesz inny model, pobierz go w Ollamie i ustaw `OLLAMA_MODEL` w `/etc/ubuntu-ai/daemon.env`. Instalator nie uruchamia niezweryfikowanego zdalnego skryptu instalacyjnego. Lokalny endpoint API nie ma uwierzytelniania: **nie wystawiaj portu 8000 do Internetu**.
+Domyślny model `dolphin3:8b` nie jest wariantem uncensored. Jeśli chcesz inny model, pobierz go w Ollamie i ustaw `OLLAMA_MODEL` w `/etc/ubuntu-ai/daemon.env`. Instalator nie uruchamia niezweryfikowanego zdalnego skryptu instalacyjnego. Lokalny endpoint API nie ma uwierzytelniania: **nie wystawiaj portu 8000 do Internetu**.
 
 Uwaga: konfiguracja i testy zostały zapisane w repozytorium, ale nie potwierdzono ich działania na docelowej maszynie.
+
+Model domyślny: **dolphin3:8b** (Dolphin 3.0, uncensored). Instalacja modelu: `ollama pull dolphin3:8b`.\n
