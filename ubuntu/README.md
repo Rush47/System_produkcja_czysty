@@ -88,3 +88,14 @@ bash ubuntu/build-kernel.sh /home/System/linux
 ```
 
 Skrypt kompiluje w oddzielnym katalogu, wymaga potwierdzenia `BUILD` i nie wykonuje `make install`, `modules_install`, zmian GRUB ani restartu. Kompilacja wymaga odpowiednich pakietów i miejsca na dysku. Nie jest to modyfikacja pamięci działającego jądra ani gwarancja, że wygenerowana zmiana jest bezpieczna. Przed użyciem produkcyjnym konieczne są testy w VM oraz zachowanie oryginalnego kernela jako opcji rozruchowej.
+
+## Lokalny czat root — automatyczne wykonywanie poleceń
+
+Po zainstalowaniu Ollamy i pobraniu `dolphin3:8b`, uruchom w lokalnym interaktywnym terminalu:
+
+```bash
+cd /opt/ubuntu-ai
+sudo /opt/ubuntu-ai/.venv/bin/python ubuntu/root-chat.py
+```
+
+Wpisz polecenie po polsku. Ollama generuje komendę Bash, a sesja uruchomiona jako root wykonuje ją bez osobnego potwierdzenia każdego polecenia, pokazując komendę i rzeczywisty wynik procesu. `/exit` kończy sesję. **Uwaga:** model może wygenerować błędne lub destrukcyjne polecenie, a wykonanie następuje natychmiast. Funkcja przeznaczona wyłącznie do zaufanego lokalnego terminala; nie udostępniaj jej przez sieć i wykonaj kopię ważnych danych.
