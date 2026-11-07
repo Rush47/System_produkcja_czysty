@@ -6,12 +6,7 @@ import pathlib
 import hmac
 from datetime import datetime, timezone
 
-ROLES = {
-    "Aria": "Analityka Kognitywna i Lingwistyka",
-    "Aurelius": "Protokoły Strategiczne i Logika Rdzenia",
-    "Astyria": "Harmonizacja Zewnętrzna i Emulacja Środowiskowa",
-    "Alex": "Egzekucja Operacyjna i Pipeline Danych",
-}
+AGENT_NAMES = ("Aria", "Alex", "Astyria", "Aurelius")
 
 class VisualScope:
     def __init__(self, identifier, scope_mode="CAŁOŚĆ"):
@@ -54,9 +49,9 @@ class TopologicalInfinityEngine:
         return math.hypot(self.domain_length, abs(self.compact_start * self.compact_end) + 0.5)
 
 class AIAgent:
-    def __init__(self, name, role):
-        self.name, self.role = name, role
-        self.identity_matrix = SVLProtectedVariable(f"AGENT_{name.upper()}_ID", {"role": role})
+    def __init__(self, name):
+        self.name = name
+        self.identity_matrix = SVLProtectedVariable(f"AGENT_{name.upper()}_ID", {"name": name})
     def get_profile(self, data_dir=None, freshness_seconds=180):
         directory = pathlib.Path(data_dir or os.getenv("DAEMON_DATA_DIR", "/var/lib/ubuntu-ai/daemons"))
         logfile = directory / (self.name.lower() + ".jsonl")
@@ -67,14 +62,14 @@ class AIAgent:
             evidence = "recent_daemon_log" if connected else "stale_daemon_log"
         except OSError:
             connected, evidence = False, "daemon_log_unavailable"
-        return {"name": self.name, "role": self.role,
+        return {"name": self.name,
                 "status": "CONNECTED" if connected else "NOT_CONFIRMED",
                 "evidence": evidence}
 
 class SVLSystemKernel:
     def __init__(self, data_dir=None):
         self.sys_version = SVLProtectedVariable("SYS_VERSION", "5.6.1-MultiAgentCore")
-        self.agents = {name.lower(): AIAgent(name, role) for name, role in ROLES.items()}
+        self.agents = {name.lower(): AIAgent(name) for name in AGENT_NAMES}
         self.data_dir = data_dir
     def generate_system_status_report(self):
         return {
