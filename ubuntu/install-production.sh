@@ -14,7 +14,7 @@ python3 -m venv /opt/ubuntu-ai/.venv
 /opt/ubuntu-ai/.venv/bin/python -m pip install --disable-pip-version-check -r /opt/ubuntu-ai/ubuntu/requirements.txt
 install -d -o root -g root -m 0700 /var/lib/ubuntu-ai/daemons /etc/ubuntu-ai
 if [[ ! -e /etc/ubuntu-ai/daemon.env ]]; then
-  printf 'OLLAMA_BASE_URL=http://127.0.0.1:11434\nOLLAMA_MODEL=llama3.1:8b\nDAEMON_DATA_DIR=/var/lib/ubuntu-ai/daemons\n' > /etc/ubuntu-ai/daemon.env
+  printf 'OLLAMA_BASE_URL=http://127.0.0.1:11434\nOLLAMA_MODEL=dolphin3:8b\nDAEMON_DATA_DIR=/var/lib/ubuntu-ai/daemons\n' > /etc/ubuntu-ai/daemon.env
   chmod 0600 /etc/ubuntu-ai/daemon.env
 fi
 install -m 0644 /opt/ubuntu-ai/ubuntu/systemd/ubuntu-ai-agent@.service /etc/systemd/system/ubuntu-ai-agent@.service
@@ -30,7 +30,7 @@ if [[ "${INSTALL_OLLAMA:-0}" == "1" ]]; then
     echo "Automatic execution of a remote installer is intentionally disabled."
   else
     systemctl enable --now ollama.service || true
-    ollama pull "${OLLAMA_MODEL:-llama3.1:8b}"
+    ollama pull "${OLLAMA_MODEL:-dolphin3:8b}"
   fi
 fi
 echo "Ubuntu AI installed. Local API: http://127.0.0.1:8000/api/health"
