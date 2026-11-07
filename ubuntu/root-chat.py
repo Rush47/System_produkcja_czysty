@@ -39,6 +39,7 @@ async def main():
         raise SystemExit("Run with sudo: sudo python3 ubuntu/root-chat.py")
     print("System root chat / Ollama dolphin3:8b. Type /exit to quit.")
     print("Commands execute automatically with root privileges on this machine.")
+    print("Use /exec <natural language request> to explicitly execute via Ollama.")
     history = []
     while True:
         try:
@@ -57,6 +58,14 @@ async def main():
         if request == "/status":
             print("UID={} | log={}".format(os.geteuid(), LOG_FILE))
             continue
+        if request == "/exec":
+            print("Usage: /exec <polecenie naturalnym jezykiem>")
+            continue
+        if request.startswith("/exec "):
+            request = request[len("/exec "):].strip()
+            if not request:
+                print("Usage: /exec <polecenie naturalnym jezykiem>")
+                continue
         try:
             result = await chat(SYSTEM_PROMPT + request)
             raw = result["response"].strip()
