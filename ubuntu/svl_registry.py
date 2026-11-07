@@ -6,7 +6,7 @@ import pathlib
 import hmac
 from datetime import datetime, timezone
 
-AGENT_NAMES = ("Aria", "Alex", "Astyria", "Aurelius")
+AGENT_NAMES = ("Aria", "Alex", "Astyria", "Aurelius", "System")
 
 class VisualScope:
     def __init__(self, identifier, scope_mode="CAŁOŚĆ"):
