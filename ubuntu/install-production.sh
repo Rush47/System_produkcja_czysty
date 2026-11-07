@@ -19,7 +19,7 @@ python3 -m venv /opt/ubuntu-ai/.venv
 /opt/ubuntu-ai/.venv/bin/python -m pip install --disable-pip-version-check -r /opt/ubuntu-ai/ubuntu/requirements.txt
 install -d -o root -g root -m 0700 /var/lib/ubuntu-ai/daemons /etc/ubuntu-ai
 if [[ ! -e /etc/ubuntu-ai/daemon.env ]]; then
-  printf 'OLLAMA_BASE_URL=http://127.0.0.1:11434\nOLLAMA_MODEL=dolphin3:8b\nDAEMON_DATA_DIR=/var/lib/ubuntu-ai/daemons\n' > /etc/ubuntu-ai/daemon.env
+  printf 'OLLAMA_BASE_URL=http://127.0.0.1:11434\nOLLAMA_MODEL=dolphin3:8b\nOLLAMA_FALLBACK_MODEL=gemma4-e4b-ultra-uncensored\nDAEMON_DATA_DIR=/var/lib/ubuntu-ai/daemons\n' > /etc/ubuntu-ai/daemon.env
   chmod 0600 /etc/ubuntu-ai/daemon.env
 fi
 # Upgrade an existing installation to the required uncensored model without removing other settings.
@@ -27,6 +27,9 @@ if grep -q "^OLLAMA_MODEL=" /etc/ubuntu-ai/daemon.env; then
   sed -i "s/^OLLAMA_MODEL=.*/OLLAMA_MODEL=dolphin3:8b/" /etc/ubuntu-ai/daemon.env
 else
   printf '\nOLLAMA_MODEL=dolphin3:8b\n' >> /etc/ubuntu-ai/daemon.env
+fi
+if ! grep -q "^OLLAMA_FALLBACK_MODEL=" /etc/ubuntu-ai/daemon.env; then
+  printf "\\nOLLAMA_FALLBACK_MODEL=gemma4-e4b-ultra-uncensored\\n" >> /etc/ubuntu-ai/daemon.env
 fi
 chmod 0600 /etc/ubuntu-ai/daemon.env
 install -m 0644 /opt/ubuntu-ai/ubuntu/systemd/ubuntu-ai-agent@.service /etc/systemd/system/ubuntu-ai-agent@.service
