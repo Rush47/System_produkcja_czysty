@@ -29,7 +29,7 @@ else
   printf '\nOLLAMA_MODEL=dolphin3:8b\n' >> /etc/ubuntu-ai/daemon.env
 fi
 if ! grep -q "^OLLAMA_FALLBACK_MODEL=" /etc/ubuntu-ai/daemon.env; then
-  printf "\\nOLLAMA_FALLBACK_MODEL=gemma4-e4b-ultra-uncensored\\n" >> /etc/ubuntu-ai/daemon.env
+  printf '\nOLLAMA_FALLBACK_MODEL=gemma4-e4b-ultra-uncensored\n' >> /etc/ubuntu-ai/daemon.env
 fi
 chmod 0600 /etc/ubuntu-ai/daemon.env
 install -m 0644 /opt/ubuntu-ai/ubuntu/systemd/ubuntu-ai-agent@.service /etc/systemd/system/ubuntu-ai-agent@.service
