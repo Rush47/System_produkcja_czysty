@@ -1,0 +1,24 @@
+[Unit]
+Description=Ubuntu AI spherical observation daemon (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu-ai
+Group=ubuntu-ai
+WorkingDirectory=/opt/ubuntu-ai
+EnvironmentFile=-/etc/ubuntu-ai/daemon.env
+ExecStart=/opt/ubuntu-ai/.venv/bin/python -m ubuntu.daemon --agent %i --interval 60 --data-dir /var/lib/ubuntu-ai/daemons
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/ubuntu-ai
+CapabilityBoundingSet=
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
