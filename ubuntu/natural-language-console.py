@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ubuntu.ollama_agent import chat
 
 PROMPT = """Convert the following Polish or English request into a standalone Python 3 script.
