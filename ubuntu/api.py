@@ -1,11 +1,13 @@
 from contextlib import asynccontextmanager
 import os
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from .core import AGENTS, Orchestrator, observe_system
 from .ollama_agent import chat as ollama_chat, OllamaUnavailable
 from .svl_registry import SVLSystemKernel
+from .workspace_sync import workspace_events
 
 engine = Orchestrator()
 
@@ -34,7 +36,9 @@ async def tasks():
 @app.post("/api/tasks", status_code=202)
 async def create_task(req: TaskRequest):
     try:
-        return await engine.create(req.agent, req.type)
+        task = await engine.create(req.agent, req.type)
+        workspace_events.publish('tasks')
+        return task
     except ValueError as exc:
         raise HTTPException(400, str(exc))
 
@@ -49,7 +53,9 @@ async def agent_profiles():
 @app.post("/api/agents/system/chat")
 async def system_chat(req: ChatRequest):
     try:
-        return await ollama_chat(req.message, req.model)
+        response = await ollama_chat(req.message, req.model)
+        workspace_events.publish('chat')
+        return response
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     except OllamaUnavailable as exc:
@@ -86,3 +92,18 @@ async def agents_diagnostics():
         report["agents"]["system"]["fallback_installed"] = False
         report["agents"]["system"]["available_for_chat"] = False
     return report
+
+@app.get("/api/workspace/status")
+async def workspace_status():
+    return {"mode": "local-live", "revision": workspace_events.revision,
+            "subscribers": len(workspace_events.subscribers),
+            "scope": "single_backend_process"}
+
+@app.get("/api/workspace/events")
+async def workspace_stream(request: Request):
+    raw = request.headers.get("last-event-id", "")
+    after = int(raw) if raw.isdecimal() else None
+    return StreamingResponse(workspace_events.stream(after),
+                             media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache, no-transform",
+                                      "X-Accel-Buffering": "no"})
