@@ -50,3 +50,20 @@ python3 ubuntu/python-console.py
 
 Przykłady: `shell("pwd")`, `shell("id", root=True)`, `root_shell()`.
 Polecenia z `root=True` i `root_shell()` używają sudo; wymagają autoryzacji. Nie uruchamiaj tej konsoli jako usługi sieciowej ani nie udostępniaj jej agentom bez kontroli dostępu. Konsola nie jest jeszcze wbudowana w GUI.
+
+## Polecenia naturalnym językiem — edytowalne skrypty Python
+
+Po zainstalowaniu zależności `ubuntu/requirements.txt` i uruchomieniu Ollamy z modelem `dolphin3:8b`:
+
+```bash
+PYTHONPATH=. .venv/bin/python ubuntu/natural-language-console.py
+```
+
+W instalacji produkcyjnej:
+
+```bash
+cd /opt/ubuntu-ai
+/opt/ubuntu-ai/.venv/bin/python ubuntu/natural-language-console.py
+```
+
+Wpisz polecenie naturalnym językiem. Ollama wygeneruje **projekt** kodu, który zapisze się do `~/ubuntu-ai-scripts/system-*.py`. Program otworzy plik w edytorze `$EDITOR` (domyślnie `nano`); możesz zmienić cały kod. Po zamknięciu edytora wybierz `n` (nie wykonuj), `u` (uruchom jako użytkownik) lub `r` (root przez sudo i dodatkowe potwierdzenie). Kod nie uruchamia się automatycznie. Przed uruchomieniem jako root przejrzyj wszystkie polecenia.
