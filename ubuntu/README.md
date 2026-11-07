@@ -13,17 +13,17 @@ python3 -m unittest discover -s ubuntu/tests
 
 Dostępne `/api/health`, `/api/observe`, `/api/tasks`. Obserwacja obejmuje rzeczywiste dane procesów, pamięci i modeli Ollama; pozostałe wymiary uczciwie zwracają `not_connected`. Zadania są zapisywane na dysku. To nie jest jeszcze pełny orkiestrator, czat ani ISO. API nasłuchuje lokalnie; nie wystawiaj bez uwierzytelnienia do Internetu.
 
-Agent **System** jest piątym, niezależnym agentem na liście (nie kontem Linux). Docelowy silnik: lokalna Ollama; obecny rejestr nie potwierdza jeszcze sesji inferencji.\n
+Agent **System** jest piątym, niezależnym agentem na liście. Instalator tworzy też osobne konto Linux `System` z dostępem sudo. Docelowy silnik: lokalna Ollama; obecny rejestr nie potwierdza jeszcze sesji inferencji.\n
 ## Instalacja na Ubuntu (systemd)
 
 W sklonowanym repozytorium:
 
 ```bash
 sudo bash ubuntu/install-production.sh
-sudo bash ubuntu/create-system-user.sh
+sudo passwd System
 ```
 
-Druga komenda tworzy **konto Linux System** z prawem sudo i prosi o hasło. Osobno istnieje **agent AI System**. Wszystkich pięć daemonów uruchamia systemd, ale obecnie realizują obserwację systemu, a nie samodzielną inferencję agentów źródłowych.
+Instalator tworzy **konto Linux System** z prawem sudo; druga komenda ustawia mu hasło. Osobno istnieje **agent AI System**. Wszystkich pięć daemonów uruchamia systemd, ale obecnie realizują obserwację systemu, a nie samodzielną inferencję agentów źródłowych.
 
 Aby aktywować odpowiedzi agenta System, zainstaluj Ollamę zgodnie z https://ollama.com/download/linux, następnie:
 
@@ -35,7 +35,7 @@ curl -sS -X POST http://127.0.0.1:8000/api/agents/system/chat -H 'Content-Type: 
 sudo systemctl status ubuntu-ai-api.service
 ```
 
-Domyślny model `dolphin3:8b` nie jest wariantem uncensored. Jeśli chcesz inny model, pobierz go w Ollamie i ustaw `OLLAMA_MODEL` w `/etc/ubuntu-ai/daemon.env`. Instalator nie uruchamia niezweryfikowanego zdalnego skryptu instalacyjnego. Lokalny endpoint API nie ma uwierzytelniania: **nie wystawiaj portu 8000 do Internetu**.
+Domyślny model `dolphin3:8b` jest wariantem Dolphin 3.0 opisywanym jako uncensored. Jeśli chcesz inny model, pobierz go w Ollamie i ustaw `OLLAMA_MODEL` w `/etc/ubuntu-ai/daemon.env`. Instalator nie uruchamia niezweryfikowanego zdalnego skryptu instalacyjnego. Lokalny endpoint API nie ma uwierzytelniania: **nie wystawiaj portu 8000 do Internetu**.
 
 Uwaga: konfiguracja i testy zostały zapisane w repozytorium, ale nie potwierdzono ich działania na docelowej maszynie.
 
@@ -87,7 +87,7 @@ Po sprawdzeniu zmian można osobno zbudować kernel:
 bash ubuntu/build-kernel.sh /home/System/linux
 ```
 
-Skrypt kompiluje w oddzielnym katalogu, wymaga potwierdzenia `BUILD` i nie wykonuje `make install`, `modules_install`, zmian GRUB ani restartu. Kompilacja wymaga odpowiednich pakietów i miejsca na dysku. Nie jest to modyfikacja pamięci działającego jądra ani gwarancja, że wygenerowana zmiana jest bezpieczna. Przed użyciem produkcyjnym konieczne są testy w VM oraz zachowanie oryginalnego kernela jako opcji rozruchowej.
+Skrypt kompiluje w oddzielnym katalogu, wymaga potwierdzenia `BUILD` i nie wykonuje `make install`, `modules_install`, zmian GRUB ani restartu. Kompilacja wymaga odpowiednich pakietów i miejsca na dysku. Nie jest to modyfikacja pamięci działającego jądra ani gwarancja, że wygenerowana zmiana jest bezpieczna. Zachowaj oryginalny kernel jako opcję rozruchową; niepotwierdzone zmiany mogą uniemożliwić uruchomienie systemu.
 
 ## Lokalny czat root — automatyczne wykonywanie poleceń
 
