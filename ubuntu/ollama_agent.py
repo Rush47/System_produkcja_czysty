@@ -12,7 +12,7 @@ async def chat(message: str, model: str | None = None) -> dict:
     if len(message) > 32000:
         raise ValueError("Message exceeds 32000 characters")
     base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
-    chosen = model or os.getenv("OLLAMA_MODEL", "llama3.1:8b")
+    chosen = model or os.getenv("OLLAMA_MODEL", "dolphin3:8b")
     payload = {"model": chosen, "messages": [{"role": "user", "content": message}], "stream": False}
     try:
         async with httpx.AsyncClient(timeout=httpx.Timeout(180.0, connect=5.0), trust_env=False) as client:
