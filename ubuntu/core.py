@@ -8,7 +8,7 @@ import time
 import uuid
 from datetime import datetime, timezone
 
-AGENTS = ("Aria", "Alex", "Astyria", "Aurelius")
+AGENTS = ("Aria", "Alex", "Astyria", "Aurelius", "System")
 DIMENSIONS = ("code", "logs", "processes", "models", "agents", "security", "resources")
 
 def now():
