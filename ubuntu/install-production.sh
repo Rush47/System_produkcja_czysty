@@ -26,7 +26,7 @@ fi
 if grep -q "^OLLAMA_MODEL=" /etc/ubuntu-ai/daemon.env; then
   sed -i "s/^OLLAMA_MODEL=.*/OLLAMA_MODEL=dolphin3:8b/" /etc/ubuntu-ai/daemon.env
 else
-  printf "\\nOLLAMA_MODEL=dolphin3:8b\\n" >> /etc/ubuntu-ai/daemon.env
+  printf '\nOLLAMA_MODEL=dolphin3:8b\n' >> /etc/ubuntu-ai/daemon.env
 fi
 chmod 0600 /etc/ubuntu-ai/daemon.env
 install -m 0644 /opt/ubuntu-ai/ubuntu/systemd/ubuntu-ai-agent@.service /etc/systemd/system/ubuntu-ai-agent@.service
