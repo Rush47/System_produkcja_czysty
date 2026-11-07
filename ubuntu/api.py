@@ -1,4 +1,6 @@
 from contextlib import asynccontextmanager
+import os
+import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from .core import AGENTS, Orchestrator, observe_system
@@ -52,3 +54,25 @@ async def system_chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail=str(exc))
     except OllamaUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+
+@app.get("/api/diagnostics/agents")
+async def agents_diagnostics():
+    report = SVLSystemKernel().generate_system_status_report()
+    base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
+    model = os.getenv("OLLAMA_MODEL", "dolphin3:8b")
+    try:
+        async with httpx.AsyncClient(timeout=3, trust_env=False) as client:
+            response = await client.get(base + "/api/tags")
+            response.raise_for_status()
+            available = [entry.get("name") for entry in response.json().get("models", [])]
+        installed = model in available
+        report["agents"]["system"]["connection_status"] = "LOCAL_MODEL_AVAILABLE" if installed else "MODEL_NOT_INSTALLED"
+        report["agents"]["system"]["connection_label"] = "Model dostępny" if installed else "Model nie jest pobrany"
+        report["agents"]["system"]["model"] = model
+        report["agents"]["system"]["model_installed"] = installed
+    except (httpx.HTTPError, ValueError, KeyError):
+        report["agents"]["system"]["connection_status"] = "OLLAMA_UNAVAILABLE"
+        report["agents"]["system"]["connection_label"] = "Ollama niedostępna"
+        report["agents"]["system"]["model"] = model
+        report["agents"]["system"]["model_installed"] = False
+    return report
