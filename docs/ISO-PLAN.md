@@ -1,3 +1,0 @@
-# Plan obrazu ISO (po zakończeniu konfiguracji)
-Obecne repozytorium jest aplikacją Node.js, a nie dystrybucją Linux. ISO wymaga osobnego procesu budowania na Debian 13 (np. live-build), z bootloaderem, jądrem, usługami, instalatorem i testem bootowania w VM.
-Etapy: (1) ukończyć i przetestować aplikację (2) zamrozić zależności (3) przygotować pakiet systemd oraz użytkownika usługi (4) zbudować Debian live ISO (5) przetestować UEFI i BIOS w QEMU (6) opublikować artefakt Release. Model Ollama 8B może być pobierany po instalacji, aby ISO nie miało kilkunastu GB. Nie należy osadzać kluczy API ani danych użytkownika w ISO.
