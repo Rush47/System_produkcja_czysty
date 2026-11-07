@@ -60,19 +60,29 @@ async def agents_diagnostics():
     report = SVLSystemKernel().generate_system_status_report()
     base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
     model = os.getenv("OLLAMA_MODEL", "dolphin3:8b")
+    fallback = os.getenv("OLLAMA_FALLBACK_MODEL", "gemma4-e4b-ultra-uncensored")
     try:
         async with httpx.AsyncClient(timeout=3, trust_env=False) as client:
             response = await client.get(base + "/api/tags")
             response.raise_for_status()
             available = [entry.get("name") for entry in response.json().get("models", [])]
         installed = model in available
+        fallback_installed = fallback in available
         report["agents"]["system"]["connection_status"] = "LOCAL_MODEL_AVAILABLE" if installed else "MODEL_NOT_INSTALLED"
         report["agents"]["system"]["connection_label"] = "Model dostępny" if installed else "Model nie jest pobrany"
         report["agents"]["system"]["model"] = model
         report["agents"]["system"]["model_installed"] = installed
+        report["agents"]["system"]["fallback_model"] = fallback
+        report["agents"]["system"]["fallback_installed"] = fallback_installed
+        report["agents"]["system"]["available_for_chat"] = installed or fallback_installed
+        report["agents"]["system"]["connection_status"] = "LOCAL_MODEL_AVAILABLE" if installed or fallback_installed else "MODEL_NOT_INSTALLED"
+        report["agents"]["system"]["connection_label"] = "Główny model dostępny" if installed else ("Model awaryjny dostępny" if fallback_installed else "Brak zainstalowanych modeli")
     except (httpx.HTTPError, ValueError, KeyError):
         report["agents"]["system"]["connection_status"] = "OLLAMA_UNAVAILABLE"
         report["agents"]["system"]["connection_label"] = "Ollama niedostępna"
         report["agents"]["system"]["model"] = model
         report["agents"]["system"]["model_installed"] = False
+        report["agents"]["system"]["fallback_model"] = fallback
+        report["agents"]["system"]["fallback_installed"] = False
+        report["agents"]["system"]["available_for_chat"] = False
     return report
