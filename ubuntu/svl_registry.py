@@ -58,13 +58,17 @@ class AIAgent:
         try:
             stat = logfile.stat()
             age = datetime.now(timezone.utc).timestamp() - stat.st_mtime
-            connected = 0 <= age <= freshness_seconds and stat.st_size > 0
-            evidence = "recent_daemon_log" if connected else "stale_daemon_log"
+            daemon_active = 0 <= age <= freshness_seconds and stat.st_size > 0
+            evidence = "recent_daemon_log" if daemon_active else "stale_daemon_log"
         except OSError:
-            connected, evidence = False, "daemon_log_unavailable"
-        return {"name": self.name,
-                "status": "CONNECTED" if connected else "NOT_CONFIRMED",
-                "evidence": evidence}
+            daemon_active, evidence = False, "daemon_log_unavailable"
+        # Local monitoring never proves an original external agent is connected.
+        # System is a local Ollama agent; inference is checked separately.
+        return {"name": self.name, "connection_status": "LOCAL_MODEL_NOT_VERIFIED" if self.name == "System" else "NOT_CONNECTED",
+                "connection_label": "Model lokalny — wymaga weryfikacji" if self.name == "System" else "Niepodłączony — podłączę sam",
+                "worker": {"type": "local_observation", "active": daemon_active},
+                "daemon": {"active": daemon_active, "evidence": evidence},
+                "integration": "ollama" if self.name == "System" else "manual_pending"}
 
 class SVLSystemKernel:
     def __init__(self, data_dir=None):
@@ -77,5 +81,5 @@ class SVLSystemKernel:
             "system": self.sys_version.value,
             "compact_metric_c": round(TopologicalInfinityEngine(float("-inf"), float("inf")).calculate_metric_c(), 6),
             "agents": {name: agent.get_profile(self.data_dir) for name, agent in self.agents.items()},
-            "note": "Daemon log freshness is not proof of an external AI API session."
+            "note": "Four original agents are NOT_CONNECTED until manually integrated. Daemon activity is independent of AI connectivity."
         }
