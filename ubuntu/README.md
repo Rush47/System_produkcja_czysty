@@ -40,3 +40,13 @@ Domyślny model `dolphin3:8b` nie jest wariantem uncensored. Jeśli chcesz inny 
 Uwaga: konfiguracja i testy zostały zapisane w repozytorium, ale nie potwierdzono ich działania na docelowej maszynie.
 
 Model domyślny: **dolphin3:8b** (Dolphin 3.0, uncensored). Instalacja modelu: `ollama pull dolphin3:8b`.\n
+## Lokalna konsola Python + Bash + root
+
+Uruchom w interaktywnym terminalu Ubuntu:
+
+```bash
+python3 ubuntu/python-console.py
+```
+
+Przykłady: `shell("pwd")`, `shell("id", root=True)`, `root_shell()`.
+Polecenia z `root=True` i `root_shell()` używają sudo; wymagają autoryzacji. Nie uruchamiaj tej konsoli jako usługi sieciowej ani nie udostępniaj jej agentom bez kontroli dostępu. Konsola nie jest jeszcze wbudowana w GUI.
